@@ -1,7 +1,6 @@
 """NLP Flow — Native window launcher"""
 import threading, time, os, sys, queue as _queue_mod
 import webview
-import webbrowser
 from server import app, PORT, cleanup_hf_cache, _DIALOG_REQ, _DIALOG_RES
 
 def get_plaform_icon():
