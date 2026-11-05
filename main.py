@@ -1,6 +1,7 @@
 """NLP Flow — Native window launcher"""
 import threading, time, os, sys, queue as _queue_mod
 import webview
+import webbrowser
 from server import app, PORT, cleanup_hf_cache, _DIALOG_REQ, _DIALOG_RES
 
 def get_plaform_icon():
@@ -112,4 +113,18 @@ if __name__ == "__main__":
     _start_params = _inspect.signature(webview.start).parameters
     if os.path.exists(ICON) and "icon" in _start_params:
         start_kwargs["icon"] = ICON
-    webview.start(**start_kwargs)
+    try:
+        webview.start(**start_kwargs)
+    except Exception:
+        print("\n\033[91m[WARNING] Graphical environment not supported (WSL/Linux detected).\033[0m\n")        
+        print("Starting server mode. Copy and paste this URL into your favorite browser:")
+        print(f"* Running on http://127.0.0.1:{PORT}")
+        print("\033[33mPress CTRL+C to quit\033[0m")
+        
+        # Server is already running in the background thread (t.start()).
+        # Keep the main process alive so the server doesn't shut down.
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            pass
